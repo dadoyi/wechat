@@ -377,12 +377,13 @@
 
 <script>
     $('.user_list li').click(function () {
+        // 清空原来内容
+        $('.content').html('');
         // 显示聊天窗口
         $('.talk_window').removeAttr('hidden');
         // 切换发送对象
         to_user_id = $(this).find('.user_name').attr('data-id');
-        // 清空原来内容
-        $('.content').html('');
+
         // 获取之前聊天历史
         var html = '';
         $.ajax({
