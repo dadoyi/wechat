@@ -1,4 +1,4 @@
-ws = new WebSocket("ws://127.0.0.1:9001");
+ws = new WebSocket("ws://47.105.170.129:9001");
 
 var user_id = $('#user_id').val();
 console.log(user_id);
