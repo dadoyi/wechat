@@ -355,11 +355,13 @@
                 if(text.value==""){
                     alert('不能发送空消息');
                 }else{
-                    ws.send(JSON.stringify({'type':'push','user_id':user_id,'to_user_id':to_user_id,'message':text.value}));
-                    saveTalkInfo(user_id,to_user_id,text.value);
-                    // 更改左侧栏目
-                    changeLeftContent(text.value,to_user_id);
-                    chat.innerHTML += '<li class="me"><img src="'+me_img+'"><span>'+text.value+'</span></li>';
+                    if(ws.readyState === 1){
+                        ws.send(JSON.stringify({'type':'push','user_id':user_id,'to_user_id':to_user_id,'message':text.value}));
+                        saveTalkInfo(user_id,to_user_id,text.value);
+                        // 更改左侧栏目
+                        changeLeftContent(text.value,to_user_id);
+                        chat.innerHTML += '<li class="me"><img src="'+me_img+'"><span>'+text.value+'</span></li>';
+                    }
                     text.value = '';
                     chat.scrollTop=chat.scrollHeight;
                     talk.style.background="#fff";
