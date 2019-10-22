@@ -10,7 +10,9 @@ ws.onopen = function(e){
     ws.send(data)
 };
 
-
+ws.onerror = function(e){
+    console.log(e);
+}
 
 ws.onmessage = function(e){
     var data = JSON.parse(e.data);
