@@ -4,6 +4,7 @@ ws = new WebSocket("ws://47.105.170.129:9001");
 var user_id = $('#user_id').val();
 console.log(user_id);
 var to_user_id = 2;
+var from_id = 2;
 
 ws.onopen = function(e){
     var arr = {'type':'init','message':'connect start__'+user_id,'user_id':user_id};

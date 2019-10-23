@@ -348,7 +348,7 @@
                 si2.style.background="";
             };
         };
-        function b(ws){
+        function b(ws,from_id){
             var text = document.getElementById('input_box');
             var chat = document.getElementById('chatbox');
             var btn = document.getElementById('send');
@@ -375,7 +375,7 @@
 
 
         a();
-        b(ws);
+        b(ws,from_id);
     };
 </script>
 
@@ -389,7 +389,7 @@
         // 切换发送对象
         to_user_id = $(this).find('.user_name').attr('data-id');
         var from_type = 0;
-        var from_id = $(this).find('.user_name').attr('data-group-id');
+        from_id = $(this).find('.user_name').attr('data-group-id');
         if(to_user_id > 0){
             from_type = 1; // 单
         }else{
