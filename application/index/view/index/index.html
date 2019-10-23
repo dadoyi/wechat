@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -348,7 +347,7 @@
                 si2.style.background="";
             };
         };
-        function b(ws,from_id){
+        function b(ws){
             var text = document.getElementById('input_box');
             var chat = document.getElementById('chatbox');
             var btn = document.getElementById('send');
@@ -359,8 +358,12 @@
                     alert('不能发送空消息');
                 }else{
                     if(ws.readyState === 1){
-                        ws.send(JSON.stringify({'type':'push','user_id':user_id,'to_user_id':to_user_id,'message':text.value}));
-                        saveTalkInfo(user_id,to_user_id,text.value,from_id);
+                        if(to_user_id > 0){
+                            ws.send(JSON.stringify({'type':'push','user_id':user_id,'to_user_id':to_user_id,'message':text.value}));
+                            saveTalkInfo(user_id,to_user_id,text.value,from_id);
+                        }else{
+                            ws.send(JSON.stringify({'type':'send','user_id':user_id,'from_id':from_id,'message':text.value}));
+                        }
                         // 更改左侧栏目
                         changeLeftContent(text.value,to_user_id);
                         chat.innerHTML += '<li class="me"><img src="'+me_img+'"><span>'+text.value+'</span></li>';
@@ -375,7 +378,7 @@
 
 
         a();
-        b(ws,from_id);
+        b(ws);
     };
 </script>
 
@@ -390,6 +393,7 @@
         to_user_id = $(this).find('.user_name').attr('data-id');
         var from_type = 0;
         from_id = $(this).find('.user_name').attr('data-group-id');
+        // console.log(from_id);
         if(to_user_id > 0){
             from_type = 1; // 单
         }else{

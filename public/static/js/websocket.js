@@ -1,15 +1,29 @@
 ws = new WebSocket("ws://47.105.170.129:9001");
-//ws = new WebSocket("ws://127.0.0.1:9001");
+// ws = new WebSocket("ws://127.0.0.1:9001");
 
 var user_id = $('#user_id').val();
 console.log(user_id);
-var to_user_id = 2;
-var from_id = 2;
+var to_user_id;
+var from_id;
 
 ws.onopen = function(e){
-    var arr = {'type':'init','message':'connect start__'+user_id,'user_id':user_id};
-    var data = JSON.stringify(arr);
-    ws.send(data)
+    // 获取群聊信息
+    $.ajax({
+        dataType:'json',
+        type:'post',
+        url:'index/index/getGroupId',
+        data: {
+            'user_id':user_id ,
+        },
+        success:function (res) {
+            if(res.code == 0){
+                var arr = {'type':'init','message':'connect start__'+user_id,'user_id':user_id ,'data':res.data};
+                var data = JSON.stringify(arr);
+                ws.send(data)
+            }
+        }
+    });
+
 };
 
 ws.onerror = function(e){

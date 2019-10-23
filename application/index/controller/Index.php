@@ -18,9 +18,11 @@ class Index extends Controller
         $userInfo = Db::table('user')->where('id',$user_id)->find();
         $data_1 = $this->getSingleTalk($user_id);
         $data_2 = $this->getRoomList($user_id);
-        $data = array_merge($data_1,$data_2);    // halt($data);
+        $data = array_merge($data_1,$data_2);
+        //halt($data_2);
         $order = array_column($data,'date_time');
         array_multisort($order,SORT_DESC,$data);
+
         return $this->fetch('index/index',['data' => $data,'user_info' => $userInfo]);
     }
 
@@ -80,7 +82,7 @@ class Index extends Controller
     {
         $data = Db::table('room_user')
             ->where('room_user.user_id',$user_id)
-            ->leftJoin('room','room.id=room_user.id')
+            ->leftJoin('room','room.id=room_user.room_id')
             ->field('room.id,room.img,room.room_name as name')
             ->select();
         foreach ($data as $k => &$v){
@@ -96,6 +98,15 @@ class Index extends Controller
 
     }
 
+    public function getGroupId()
+    {
+        $param = $this->request->param();
+        $group = Db::table('room_user')
+            ->where('user_id',$param['user_id'])
+            ->select();
+        $group = array_column($group,'room_id','room_id');
+        return json(['code' => 0,'msg'=>'success','data' => $group ?? []]);
+    }
 
     /**
      * 获取单聊 + 群记录
