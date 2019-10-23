@@ -76,10 +76,10 @@
                 <ul class="user_list">
                     {foreach($data as $k => $v)}
                     <li>
-                        <div class="user_head"><img src="{$v.head_img}"/></div>
+                        <div class="user_head"><img src="{$v.img}"/></div>
                         <div class="user_text">
-                            <p class="user_name" data-id="{$v.id}">{$v.user_name}</p>
-                            <p class="user_message">这是一个消息我看看地皮菜江安河</p>
+                            <p class="user_name" data-id="{$v.user_id}" data-group-id="{$v.id}">{$v.name}</p>
+                            <p class="user_message">{$v.content}</p>
                         </div>
                         <div class="user_time">上午 11：03</div>
                     </li>
@@ -299,7 +299,7 @@
     };
 
     // 保存发送的消息
-    function saveTalkInfo(user_id,to_user_id,content){
+    function saveTalkInfo(user_id,to_user_id,content,from_id){
         var status = 1;
         $.ajax({
             dataType:'json',
@@ -309,6 +309,7 @@
                 'user_id':user_id ,
                 'to_user_id':to_user_id,
                 'status':status,
+                'from_id':from_id,
                 'content':content
             },
             success:function (res) {
@@ -359,7 +360,7 @@
                 }else{
                     if(ws.readyState === 1){
                         ws.send(JSON.stringify({'type':'push','user_id':user_id,'to_user_id':to_user_id,'message':text.value}));
-                        saveTalkInfo(user_id,to_user_id,text.value);
+                        saveTalkInfo(user_id,to_user_id,text.value,from_id);
                         // 更改左侧栏目
                         changeLeftContent(text.value,to_user_id);
                         chat.innerHTML += '<li class="me"><img src="'+me_img+'"><span>'+text.value+'</span></li>';
@@ -387,14 +388,20 @@
         $('.talk_window').removeAttr('hidden');
         // 切换发送对象
         to_user_id = $(this).find('.user_name').attr('data-id');
-
+        var from_type = 0;
+        var from_id = $(this).find('.user_name').attr('data-group-id');
+        if(to_user_id > 0){
+            from_type = 1; // 单
+        }else{
+            from_type = 2 // 群
+        }
         // 获取之前聊天历史
         var html = '';
         $.ajax({
             dataType:'json',
             type:'post',
             url:'index/index/getUserTalkHistory',
-            data: {'user_id':user_id ,'to_user_id':to_user_id},
+            data: {'user_id':user_id ,'to_user_id':to_user_id ,'from_type':from_type,'from_id':from_id},
             success:function (res) {
                 if(res.code == 0){
                     $.each(res.data,function (k,v) {
