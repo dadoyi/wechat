@@ -5,7 +5,7 @@ var user_id = $('#user_id').val();
 console.log(user_id);
 var to_user_id;
 var from_id;
-
+var img = $('#me').attr('src');
 ws.onopen = function(e){
     // 获取群聊信息
     $.ajax({
@@ -45,12 +45,17 @@ ws.onmessage = function(e){
             break;
         case 'push':
             if(data.user_id !== user_id){
-                changeLeftContent(data.message,data.user_id);
+                changeLeftContent(data.message,data.user_id,from_id);
                 chat.innerHTML += '<li class="other"><img src="'+other_img+'"><span>'+data.message+'</span></li>';
             }
             break;
         case 'send':
-            // console.log(data.message);
+            console.log(data);
+            if(data.user_id !== user_id){
+                console.log(2222222222);
+                changeLeftContent(data.message,0,from_id);
+                chat.innerHTML += '<li class="other"><img src="'+data.img+'"><span>'+data.message+'</span></li>';
+            }
             break;
         default :
             console.log('心跳检测：'+ data.type);

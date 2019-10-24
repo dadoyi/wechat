@@ -80,7 +80,7 @@
                             <p class="user_name" data-id="{$v.user_id}" data-group-id="{$v.id}">{$v.name}</p>
                             <p class="user_message">{$v.content}</p>
                         </div>
-                        <div class="user_time">上午 11：03</div>
+                        <div class="user_time">{$v.time}</div>
                     </li>
                     {/foreach}
                 </ul>
@@ -288,12 +288,25 @@
 
 <script>
     // 发送消息同时更改左侧栏目
-    function changeLeftContent(content,index_id){
+    function changeLeftContent(content,index_id,group_id){
         $(".user_list li").each(function(index){
             var id = $(this).find('.user_name').attr('data-id');
-            if(id === index_id){
-                $(this).find('.user_message').text(content);
+            var data_group_id = $(this).find('.user_name').attr('data-group-id');
+
+            // 单聊
+            if(index_id > 0){
+                if(id === index_id){
+                    $(this).find('.user_message').text(content);
+                }
             }
+
+            // 群
+            if(index_id == 0 && id == 0){
+                if(group_id == data_group_id){
+                    $(this).find('.user_message').text(content);
+                }
+            }
+
         });
     };
 
@@ -361,11 +374,13 @@
                         if(to_user_id > 0){
                             ws.send(JSON.stringify({'type':'push','user_id':user_id,'to_user_id':to_user_id,'message':text.value}));
                             saveTalkInfo(user_id,to_user_id,text.value,from_id);
+                            changeLeftContent(text.value,to_user_id,from_id);
                         }else{
-                            ws.send(JSON.stringify({'type':'send','user_id':user_id,'from_id':from_id,'message':text.value}));
+                            ws.send(JSON.stringify({'type':'send','user_id':user_id,'from_id':from_id,'message':text.value,'img': img}));
+                            changeLeftContent(text.value,to_user_id,from_id);
                         }
                         // 更改左侧栏目
-                        changeLeftContent(text.value,to_user_id);
+
                         chat.innerHTML += '<li class="me"><img src="'+me_img+'"><span>'+text.value+'</span></li>';
                     }
                     text.value = '';

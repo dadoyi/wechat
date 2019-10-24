@@ -19,7 +19,6 @@ class Index extends Controller
         $data_1 = $this->getSingleTalk($user_id);
         $data_2 = $this->getRoomList($user_id);
         $data = array_merge($data_1,$data_2);
-        //halt($data_2);
         $order = array_column($data,'date_time');
         array_multisort($order,SORT_DESC,$data);
 
@@ -61,8 +60,8 @@ class Index extends Controller
                 $v['img'] = $userData[$v['user_id']]['head_img'];
                 $v['from_type'] = self::SINGLE_TYPE; // 单聊
             }
-            $where_1 = ['user_id'=> $v['user_id']];
-            $whereOr_1 = ['to_user_id'=> $v['user_id']];
+            $where_1 = ['user_id'=> $v['user_id'],'to_user_id' => $user_id];
+            $whereOr_1 = ['to_user_id'=> $v['user_id'], 'user_id' => $user_id];
             $content = Db::table('talk_history')
                 ->where(function ($query) use ($where_1){
                     $query->where($where_1);
@@ -72,7 +71,7 @@ class Index extends Controller
                 ->find();
             $v['type'] = $content['type'];
             $v['content'] = $content['content'];
-            $v['time'] = $content['created_at'];
+            $v['time'] = date('H:i',strtotime($content['created_at']));
             $v['date_time'] = strtotime($content['created_at']);
         }
         return $data;
@@ -91,7 +90,7 @@ class Index extends Controller
             $v['from_type'] = self::GROUP_TYPE;
             $v['type'] = $content['type'];
             $v['content'] = $content['content'];
-            $v['time'] = $content['created_at'];
+            $v['time'] = date('i:s',strtotime($content['created_at']));
             $v['date_time'] = strtotime($content['created_at']);
         }
         return $data;
@@ -156,6 +155,7 @@ class Index extends Controller
     public function saveTalkInfo()
     {
         $param = $this->request->param();
+        halt($param);
         $data = [
             'user_id' => $param['user_id'],
             'to_user_id' => $param['to_user_id'],
